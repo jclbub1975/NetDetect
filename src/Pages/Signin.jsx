@@ -1,33 +1,29 @@
-import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
-import { auth } from "../Components/firebase";
 import { toast } from "react-toastify";
-import SignInwithGoogle from "../Components/signInWIthGoogle";
+import axios from "axios";
 
 function Signin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const login = async () => {
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      console.log("User logged in Successfully");
-      window.location.href = "/dashboard";
-      toast.success("User logged in Successfully", {
-        position: "top-center",
-      });
-    } catch (error) {
-      console.log(error.message);
+      // Example API call for authentication
+      const response = await axios.post("/api/login", { email, password });
 
-      toast.error(error.message, {
-        position: "bottom-center",
-      });
+      if (response.status === 200) {
+        toast.success("Login successful!");
+        // Trigger page refresh
+        // window.location.reload();
+      }
+    } catch (error) {
+      toast.error("Login failed. Please check your credentials.");
+      console.error("Login error:", error);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <>
       <h3>Signin</h3>
 
       <div className="mb-3">
@@ -53,12 +49,11 @@ function Signin() {
       </div>
 
       <div className="d-grid">
-        <button type="submit" className="btn btn-primary">
+        <button className="btn btn-primary" onClick={login}>
           Submit
         </button>
-          <SignInwithGoogle/>
       </div>
-    </form>
+    </>
   );
 }
 

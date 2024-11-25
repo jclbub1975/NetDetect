@@ -5,13 +5,14 @@ import { getFirestore } from 'firebase/firestore'; // Import Firestore
 
 // Firebase configuration
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID",
-  measurementId: "YOUR_MEASUREMENT_ID"
+  apiKey: "AIzaSyAjfa3BHCQtVbVDffoTQX0Ta7pRka2bmVI",
+  authDomain: "netdetect-a206e.firebaseapp.com",
+  databaseURL: "https://netdetect-a206e-default-rtdb.firebaseio.com",
+  projectId: "netdetect-a206e",
+  storageBucket: "netdetect-a206e.firebasestorage.app",
+  messagingSenderId: "1023311818764",
+  appId: "1:1023311818764:web:6efc5124a904aaca013e29",
+  measurementId: "G-168QFVW2W9"
 };
 
 // Initialize Firebase
@@ -21,4 +22,5 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);  // Firestore instance
 
+// Export the instances
 export { auth, db };

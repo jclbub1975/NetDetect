@@ -13,7 +13,7 @@ function Popup({ isShow, close, type }) {
   useEffect(() => {
     if (isShow) {
       // Prevent body scrolling when modal is open
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = 'auto';
     } else {
       document.body.style.overflow = 'auto';
     }

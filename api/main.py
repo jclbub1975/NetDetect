@@ -8,7 +8,7 @@ import datetime
 
 cred = credentials.Certificate("key.json")
 firebase_admin.initialize_app(cred, {
-    'databaseURL': 'https://netdetect-b48e0-default-rtdb.firebaseio.com' 
+    'databaseURL': 'https://netdetect-a206e-default-rtdb.firebaseio.com' 
 })
 
 app = FastAPI()
@@ -52,7 +52,7 @@ def read_root():
 
 @app.get("/auth")
 def read_item(q: Union[str, None] = None):
-    ref = db.reference(f'auth')
+    ref = db.reference(f'authentication')
     item_data = ref.get()
 
     if item_data:
@@ -60,10 +60,9 @@ def read_item(q: Union[str, None] = None):
     else:
         return {"error": "Item not found"}
 
-
 @app.post("/login")
 async def login(account: Account):
-    ref = db.reference(f'auth')
+    ref = db.reference(f'authentication')
     item_data = ref.get()
 
     if item_data:
@@ -81,3 +80,4 @@ async def login(account: Account):
 @app.get("/protected")
 async def protected_route(token: str = Depends(verify_access_token)):
     return {"message": "Protected content", "user": token}
+

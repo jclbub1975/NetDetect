@@ -1,7 +1,7 @@
 import Footer from '../Components/Footer';
 import { Cobe } from '../Components/Cobe';
 import TypingEffect from '../Components/TypingEffect';
-import Popup from "../Components/Popup"; // Import Popup modal component
+import Popup from "../Components/Popup";
 import Navbar from "../Components/Navbar";
 import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
@@ -10,19 +10,17 @@ function Home() {
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
 
-    // Open modal for Sign In
     const openModal = () => {
         setIsModalOpen(true);
     };
 
-    // Close modal
     const closeModal = () => {
         setIsModalOpen(false);
     };
 
-    useEffect(() => {
-        fetch(); // Ensure this function is defined or fetches data
-    }, []);
+    // useEffect(() => {
+    //     fetch(); 
+    // }, []);
 
     return (
         <>
@@ -39,7 +37,7 @@ function Home() {
                     </p>
                     <button 
                         className="bg-gradient-to-r from-blue-500 to-blue-700 text-white py-3 px-8 rounded-2xl shadow-lg transform hover:scale-105 transition duration-300 ease-in-out hover:shadow-xl animate-shine"
-                        onClick={openModal} // Trigger modal on button click
+                        onClick={openModal} 
                     >
                         Getting Started
                     </button>
