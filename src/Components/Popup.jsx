@@ -4,7 +4,7 @@ function Popup({ isShow, close }) {
   if (!isShow) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-500 bg-opacity-75 z-20 grid place-items-center">
+    <div className=" grid fixed inset-0 bg-opacity-75 z-20 mt-[150px] ms-[950px] justify-center place-items-center">
       <div className="bg-white p-6 rounded-lg">
         <h2 className="text-xl mb-4">Sign In</h2>
         <form className="flex flex-col items-center">

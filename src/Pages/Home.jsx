@@ -1,8 +1,12 @@
 import Footer from '../Components/Footer';
 import { Cobe } from '../Components/Cobe';
 import TypingEffect from '../Components/TypingEffect';
+import Popup from '../Components/Popup';
+import { useState } from 'react';
 
 function Home() {
+    const [isShow, setIshow] = useState(false)
+
     return (
         <>
             <section id="home" className="home flex flex-row items-center h-screen px-[10%] py-[5%] bg-gradient-to-br from-blue-200 via-white to-blue-100 relative overflow-hidden">
@@ -14,10 +18,16 @@ function Home() {
                     <p className="text-lg text-gray-600 text-start mt-2 max-w-md leading-relaxed">
                         Easy network management with AI analysis and user monitoring to secure your infrastructure.
                     </p>
-                    <button className="bg-gradient-to-r from-blue-500 to-blue-700 text-white py-3 px-8 rounded-2xl shadow-lg transform hover:scale-105 transition duration-300 ease-in-out hover:shadow-xl animate-shine">
+                    <button onClick={() => setIshow(true)} className="bg-gradient-to-r from-blue-500 to-blue-700 text-white py-3 px-8 rounded-2xl shadow-lg transform hover:scale-105 transition duration-300 ease-in-out hover:shadow-xl animate-shine">
                         Getting Started
                     </button>
                 </div>
+                {isShow ? (
+                    <Popup
+                        isShow={isShow}
+                        close={() => setIshow(false)}
+                    />
+                ) : ''}
 
                 <div className="column2 relative h-full w-[50%] flex items-center justify-center">
                     <Cobe />
