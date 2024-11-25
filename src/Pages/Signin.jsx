@@ -13,7 +13,7 @@ function Signin() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       console.log("User logged in Successfully");
-      window.location.href = "/profile";
+      window.location.href = "/dashboard";
       toast.success("User logged in Successfully", {
         position: "top-center",
       });
@@ -56,11 +56,8 @@ function Signin() {
         <button type="submit" className="btn btn-primary">
           Submit
         </button>
+          <SignInwithGoogle/>
       </div>
-      <p className="forgot-password text-right">
-        New user <a href="/register">Register Here</a>
-      </p>
-      <SignInwithGoogle/>
     </form>
   );
 }

@@ -1,18 +1,64 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
-function Popup({ isShow, close }) {
+function Popup({ isShow, close, type }) {
+  const modalRef = useRef(null);
+
+  // Close modal when clicking outside the content
+  const handleBackdropClick = (e) => {
+    if (modalRef.current && !modalRef.current.contains(e.target)) {
+      close();
+    }
+  };
+
+  useEffect(() => {
+    if (isShow) {
+      // Prevent body scrolling when modal is open
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+  }, [isShow]);
+
   if (!isShow) return null;
 
   return (
-    <div className=" grid fixed inset-0 bg-opacity-75 z-20 mt-[150px] ms-[950px] justify-center place-items-center">
-      <div className="bg-white p-6 rounded-lg">
-        <h2 className="text-xl mb-4">Sign In</h2>
-        <form className="flex flex-col items-center">
-          <input type="email" placeholder="Email" className="mb-2 p-2 border rounded w-full" />
-          <input type="password" placeholder="Password" className="mb-4 p-2 border rounded w-full" />
-          <button type="submit" className="bg-blue-500 text-white p-2 rounded w-full">Submit</button>
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+      onClick={handleBackdropClick}
+    >
+      <div
+        ref={modalRef}
+        className="bg-white p-8 rounded-lg shadow-lg max-w-sm w-full"
+      >
+        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
+          {type === 'signup' ? 'Sign Up' : 'Sign In'}
+        </h2>
+        <form className="flex flex-col gap-4">
+          <input
+            type="email"
+            placeholder="Email"
+            className="p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            className="p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+          <button
+            type="submit"
+            className="bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-300"
+          >
+            {type === 'signup' ? 'Create Account' : 'Submit'}
+          </button>
         </form>
-        <button onClick={close} className="mt-4 text-blue-500">Close</button>
+        <button
+          onClick={close}
+          className="mt-4 text-blue-600 text-center w-full transition duration-300"
+        >
+          Close
+        </button>
       </div>
     </div>
   );
