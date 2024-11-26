@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../Components/firebase"; // Import Firebase auth instance
 import Navbar from "../Components/Navbar";
 import Popup from "../Components/Popup"; // Sign-in modal
 import Popup1 from "../Components/Popup1"; // Message sent modal
@@ -15,19 +17,17 @@ const ContactUs = () => {
     message: "",
   });
 
-  // Check if the user is logged in
+  // Check if the user is logged in using Firebase Auth
   useEffect(() => {
-    const token = localStorage.getItem("access_token");
-    if (token) {
-      setIsLoggedIn(true); // User is logged in
-    }
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsLoggedIn(!!user); // Set true if user exists, otherwise false
+    });
+    return () => unsubscribe(); // Clean up subscription
   }, []);
 
-  // Open and close modal for Sign-In
+  // Open and close modals
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
-
-  // Open and close modal for Message Sent confirmation
   const openMessageModal = () => setIsMessageSent(true);
   const closeMessageModal = () => setIsMessageSent(false);
 
@@ -42,21 +42,16 @@ const ContactUs = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const token = localStorage.getItem("access_token");
-
-    if (!token) {
-      // If the user is not signed in, open the sign-in modal
-      openModal();
+    if (!isLoggedIn) {
+      openModal();  // Show sign-in modal if not logged in
     } else {
-      // If the user is signed in, show the message sent modal
-      openMessageModal();
+      openMessageModal(); // Show message sent modal if logged in
     }
   };
 
   const handleSignInSuccess = () => {
-    // When the user successfully signs in, close the modal and show the message sent modal
-    closeModal();
-    openMessageModal();
+    closeModal(); // Close sign-in modal
+    openMessageModal(); // Show message sent modal after sign-in
   };
 
   const closeMessageModalAndNavigate = () => {
@@ -120,8 +115,15 @@ const ContactUs = () => {
         </div>
       </div>
 
-      {/* Modal for Sign-In */}
-      {isModalOpen && <Popup isShow={isModalOpen} close={closeModal} type= "signin" onSignInSuccess={handleSignInSuccess} />}
+      {/* Modal for Sign-In (only show if user isn't logged in) */}
+      {!isLoggedIn && isModalOpen && (
+        <Popup 
+          isShow={isModalOpen} 
+          close={closeModal} 
+          type="signin" 
+          onSignInSuccess={handleSignInSuccess} 
+        />
+      )}
 
       {/* Modal for Message Sent Confirmation */}
       {isMessageSent && (
