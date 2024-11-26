@@ -1,6 +1,6 @@
 import React from 'react';
 
-function Contact() {
+function Dashboard() {
     const logout = () => {
         console.log('User logged out');
     };
@@ -15,14 +15,9 @@ function Contact() {
                 <p className="text-[#999]">We'll notify you when it's done!</p>
             </section>
 
-            <button
-                onClick={logout}
-                className="bg-red-500 text-white text-xl font-semibold py-2 px-6 rounded-md hover:bg-red-600 transition duration-300"
-            >
-                Logout
-            </button>
+           
         </>
     );
 }
 
-export default Contact;
+export default Dashboard;

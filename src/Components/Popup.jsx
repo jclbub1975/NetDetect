@@ -1,7 +1,25 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { auth } from './firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
 
 function Popup({ isShow, close, type }) {
   const modalRef = useRef(null);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  const handleSignIn = async (e) => {
+    e.preventDefault();
+
+    try {
+      const userCredentials = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredentials.user;
+      navigate("/dashboard");
+    } catch (err) {
+      console.log(err.message);
+    }
+  }
 
   // Close modal when clicking outside the content
   const handleBackdropClick = (e) => {
@@ -39,14 +57,17 @@ function Popup({ isShow, close, type }) {
             placeholder="Email"
             className="p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
+            onChange={(e) => setEmail(e.target.value)}
           />
           <input
             type="password"
             placeholder="Password"
             className="p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
+            onChange={(e) => setPassword(e.target.value)}
           />
           <button
+            onClick={handleSignIn}
             type="submit"
             className="bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-300"
           >
