@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../Components/Navbar";
 import Popup from "../Components/Popup"; // Import Popup modal component
 import TypingEffect1 from '../Components/TypingEffect1';
-import '../Styles/blink.css';
 import Image1 from '../assets/robot1.gif';
 
 const About = () => {
@@ -45,7 +44,7 @@ const About = () => {
             About Our Network Management System
           </p>
           <p className="text-lg text-gray-700 mb-12 text-justify ml-8 mr-8">
-            Our Network Management System is designed to provide organizations with a comprehensive and user-friendly solution for monitoring, managing, and securing their networks...
+            Our Network Management System is designed to provide organizations with a comprehensive and user-friendly solution for monitoring, managing, and securing their networks. Featuring a Centralized Dashboard, the system offers real-time insights through AI-driven traffic analysis, optimizing resource allocation and preventing conestion. Security is a top priority with Automated User Monitoring and Intrusion Detection to safeguard against unauthorized access and potential threats. Our strong Usage Analytics generate detailed reports, while Anomaly Detection flags unusual behavior to ensure proactive responses. Built for scalability, our platform adapts to your organization's growth, empowering you to focus on your corre objectives with confidence that your network is secure and efficient.
           </p>
         </div>
       </div>

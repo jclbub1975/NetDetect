@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from "react";
+// src/components/ContactUs.jsx
+
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../Components/Navbar";
 import Popup from "../Components/Popup"; // Import Popup modal component
-import TypingEffect1 from '../Components/TypingEffect1';
-import '../Styles/blink.css';
-import Image1 from '../assets/robot1.gif';
 
-const Contact = () => {
+
+const ContactUs = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false); // State for controlling the modal visibility
 
-  // Check if the user is logged in and redirect to the dashboard if so
+
+  // Redirect to dashboard if the user is already logged in
   useEffect(() => {
     const token = localStorage.getItem("access_token");
     if (token) {
@@ -23,19 +24,88 @@ const Contact = () => {
   // Close modal
   const closeModal = () => setIsModalOpen(false);
 
+
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Handle form submission logic here
+    console.log("Form Data Submitted:", formData);
+  };
+
   return (
     <>
       <Navbar onSignInClick={openModal} /> {/* Pass openModal function to Navbar */}
+      <div className="bg-gradient-to-b from-purple-500 to-blue-500 min-h-[800px] flex items-center justify-center">
+        <div className="max-w-md w-full p-8 bg-white shadow-lg rounded-lg">
+          <h2 className="text-3xl font-bold text-center text-purple-700 mb-6">Contact Us</h2>
+          <p className="text-center text-gray-600 mb-6">
+            Got a question? We’d love to hear from you. Send us a message and we’ll respond as soon as possible.
+          </p>
 
-      <section
-                id="contact"
-                className="contact flex flex-row items-center h-screen px-[10%] py-[5%] bg-gradient-to-br from-blue-200 via-white to-blue-100 relative overflow-hidden"
+          <form onSubmit={handleSubmit}>
+            <div className="mb-4">
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                Name*
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-300 rounded-md mt-2"
+                required
+              />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                Email address*
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-300 rounded-md mt-2"
+                required
+              />
+            </div>
+            <div className="mb-6">
+              <label htmlFor="message" className="block text-sm font-medium text-gray-700">
+                Message
+              </label>
+              <textarea
+                id="message"
+                name="message"
+                value={formData.message}
+                onChange={handleChange}
+                rows="5"
+                className="w-full p-3 border border-gray-300 rounded-md mt-2"
+              />
+            </div>
+            <button
+              type="submit"
+              className="w-full py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200"
             >
-                <h2 className="text-[#000] mr-[3rem]">Site under construction</h2>
-                <p className="text-[#999]">We'll notify you when it's done!</p>
-            </section>
-
-
+              Send Message
+            </button>
+          </form>
+        </div>
+      </div>
       {/* Modal for Sign In */}
       {isModalOpen && (
         <Popup
@@ -47,4 +117,4 @@ const Contact = () => {
   );
 };
 
-export default Contact;
+export default ContactUs;
