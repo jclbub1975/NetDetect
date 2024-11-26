@@ -26,7 +26,7 @@ const About = () => {
     <>
       <Navbar onSignInClick={openModal} /> {/* Pass openModal function to Navbar */}
 
-      <div className="min-h-screen w-full bg-blue-200 flex flex-col items-center justify-center text-center p-12 overflow-y-auto">
+      <div className="min-h-screen w-full bg-gradient-to-b from-purple-500 to-blue-500 flex flex-col items-center justify-center text-center p-12 overflow-y-auto">
         <div className="max-w-4xl w-full bg-white p-6 rounded-lg shadow-lg">
           <h1 className="text-5xl text-red-700 font-semibold mb-4">
             About <br />
