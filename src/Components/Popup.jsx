@@ -5,21 +5,48 @@ import { useNavigate } from 'react-router-dom';
 
 function Popup({ isShow, close, type }) {
   const modalRef = useRef(null);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Retrieve credentials from local storage if they exist
+    const savedEmail = localStorage.getItem('savedEmail');
+    const savedPassword = localStorage.getItem('savedPassword');
+    
+    if (savedEmail) {
+      setEmail(savedEmail);
+      setRememberMe(true); // If email is found, the "Remember Me" box is checked
+    }
+    if (savedPassword) {
+      setPassword(savedPassword);
+      setRememberMe(true); // If password is found, the "Remember Me" box is checked
+
+    }
+  }, []);
 
   const handleSignIn = async (e) => {
     e.preventDefault();
-
     try {
-      const userCredentials = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredentials.user;
-      navigate("/dashboard");
+      await signInWithEmailAndPassword(auth, email, password);
+      
+      if (rememberMe) {
+        // Save credentials in local storage
+        localStorage.setItem('savedEmail', email);
+        localStorage.setItem('savedPassword', password); // Storing password is optional but can be useful for autofill
+      } else {
+        // Clear credentials from local storage
+        localStorage.removeItem('savedEmail');
+        localStorage.removeItem('savedPassword');
+      }
+
+      navigate('/dashboard');
     } catch (err) {
-      console.log(err.message);
+      setError('Invalid email or password. Please try again.');
     }
-  }
+  };
 
   // Close modal when clicking outside the content
   const handleBackdropClick = (e) => {
@@ -27,17 +54,6 @@ function Popup({ isShow, close, type }) {
       close();
     }
   };
-
-  useEffect(() => {
-    if (isShow) {
-      // Prevent body scrolling when modal is open
-      document.body.style.overflow = 'auto';
-    } else {
-      document.body.style.overflow = 'auto';
-    }
-  }, [isShow]);
-
-  if (!isShow) return null;
 
   return (
     <div
@@ -51,9 +67,12 @@ function Popup({ isShow, close, type }) {
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
           {type === 'signup' ? 'Sign Up' : 'Sign In'}
         </h2>
-        <form className="flex flex-col gap-4">
+        <form className="flex flex-col gap-4" onSubmit={handleSignIn}>
           <input
             type="email"
+            name="email"
+            autoComplete="email" // Ensures autofill for the email
+            value={email}
             placeholder="Email"
             className="p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
@@ -61,13 +80,32 @@ function Popup({ isShow, close, type }) {
           />
           <input
             type="password"
+            name="password"
+            autoComplete="current-password" // Enables password autofill
+            value={password}
             placeholder="Password"
             className="p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
             onChange={(e) => setPassword(e.target.value)}
           />
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="rememberMe"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+              className="w-4 h-4"
+            />
+            <label htmlFor="rememberMe" className="text-gray-600 text-sm">
+              Remember Me
+            </label>
+          </div>
+          {error && (
+            <div className="text-red-500 text-sm text-center">
+              {error}
+            </div>
+          )}
           <button
-            onClick={handleSignIn}
             type="submit"
             className="bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-300"
           >
