@@ -40,8 +40,22 @@ const ContactUs = () => {
     }));
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();  // Prevents form from reloading the page
 
+    // Validate required fields
+    const { from_name, from_email, message } = formData;
+    if (!from_name.trim() || !from_email.trim() || !message.trim()) {
+      alert("Please fill in all fields before submitting.");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(from_email)) {
+    alert("Please enter a valid email address.");
+    return;
+  }
+  
     const serviceId = import.meta.env.VITE_SEVICE_ID;
     const templateId = import.meta.env.VITE_TEMPLATE_ID;
     const publicKey = import.meta.env.VITE_PUBLIC_KET;
@@ -49,38 +63,30 @@ const ContactUs = () => {
     const templateParams = {
       from_name: formData.from_name,
       from_email: formData.from_email,
-      message: formData.message
+      message: formData.message,
     };
 
     try {
-      const response = await emailjs.send(
-        serviceId,
-        templateId,
-        templateParams,
-        publicKey
-      );
-      if(response){
-        openMessageModal();
+      const response = await emailjs.send(serviceId, templateId, templateParams, publicKey);
+      if (response.status === 200) {
+        openMessageModal();  // Show success modal on successful email send
       }
-
-    }catch(error){
-      console.log(error)
+    } catch (error) {
+      console.error("Failed to send message:", error);
+      alert("Failed to send the message. Please try again later.");
     }
   };
-  
 
+  // Handle sign-in success
   const handleSignInSuccess = () => {
-    // Set login status to true after successful sign-in
-    setIsLoggedIn(true);
+    setIsLoggedIn(true);  // Set login status to true after successful sign-in
     closeModal(); // Close sign-in modal
-    
-    // Immediately show the message sent modal after successful sign-in
-    openMessageModal();
+    openMessageModal(); // Immediately show the message sent modal after successful sign-in
   };
 
   const closeMessageModalAndNavigate = () => {
     closeMessageModal();
-    navigate("/dashboard"); // Navigate to the homepage after closing the modal
+    navigate("/dashboard"); // Navigate to the dashboard after closing the modal
   };
 
   return (
@@ -130,6 +136,7 @@ const ContactUs = () => {
               />
             </div>
             <button onClick={handleSubmit}
+              type="submit"
               className="w-full py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200"
             >
               Send Message
@@ -140,11 +147,11 @@ const ContactUs = () => {
 
       {/* Modal for Sign-In (only show if user isn't logged in) */}
       {!isLoggedIn && isModalOpen && (
-        <Popup 
-          isShow={isModalOpen} 
-          close={closeModal} 
-          type="signin" 
-          onSignInSuccess={handleSignInSuccess} 
+        <Popup
+          isShow={isModalOpen}
+          close={closeModal}
+          type="signin"
+          onSignInSuccess={handleSignInSuccess}
         />
       )}
 
