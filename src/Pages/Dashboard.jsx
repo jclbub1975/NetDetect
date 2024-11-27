@@ -8,7 +8,8 @@ import Popup from "../Components/Popup"; // Import Sign-In modal
 const Dashboard = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false); // State for controlling modal visibility
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track user login status
+  const [isLoggedIn, setIsLoggedIn] = useState(null); // Track user login status (null means loading)
+  const [isLoading, setIsLoading] = useState(true); // Loading state for auth checking
 
   // Open modal for Sign In
   const openModal = () => setIsModalOpen(true);
@@ -17,24 +18,26 @@ const Dashboard = () => {
 
   // Set Firebase auth persistence to local for session persistence
   useEffect(() => {
-    // Set the persistence to local for better session handling
+    // Set persistence to local to keep the user signed in across page reloads
     setPersistence(auth, browserLocalPersistence)
       .then(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
-          console.log("Authentication state changed:", user);  // Debugging log
+          // Authentication state has been checked and updated
           if (user) {
-            setIsLoggedIn(true); // Set login state
-            navigate("/dashboard"); // Navigate to dashboard if user is logged in
+            setIsLoggedIn(true);
+            navigate("/dashboard"); // Navigate to the dashboard if user is logged in
           } else {
-            setIsLoggedIn(false); // Set logout state
-            navigate("/"); // Navigate to home page if not logged in
+            setIsLoggedIn(false);
+            navigate("/"); // Navigate to home page if user is not logged in
           }
+          setIsLoading(false); // Stop the loading once auth state is checked
         });
 
         return () => unsubscribe(); // Clean up the subscription when the component is unmounted
       })
       .catch((error) => {
         console.error("Error setting persistence:", error);
+        setIsLoading(false); // Stop the loading in case of an error
       });
   }, [navigate]);
 
@@ -44,6 +47,11 @@ const Dashboard = () => {
     closeModal(); // Close the sign-in modal
     navigate("/dashboard"); // Navigate to the dashboard after successful sign-in
   };
+
+  // If still loading the auth state, show a loading spinner or message
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>

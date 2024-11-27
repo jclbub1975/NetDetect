@@ -5,6 +5,7 @@ import { auth } from "../Components/firebase"; // Import Firebase auth instance
 import Navbar from "../Components/Navbar";
 import Popup from "../Components/Popup"; // Sign-in modal
 import Popup1 from "../Components/Popup1"; // Message sent modal
+import emailjs from "emailjs-com";
 
 const ContactUs = () => {
   const navigate = useNavigate();
@@ -12,9 +13,9 @@ const ContactUs = () => {
   const [isMessageSent, setIsMessageSent] = useState(false); // For Message Sent modal
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Track user login status
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    message: "",
+    from_name: "Test Person one",
+    from_email: "sample@email.com",
+    message: "test message.....",
   });
 
   // Check if the user is logged in using Firebase Auth
@@ -39,11 +40,32 @@ const ContactUs = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-  
-    // Directly open the message sent modal when the form is submitted
-    openMessageModal();
+  const handleSubmit = async () => {
+
+    const serviceId = import.meta.env.VITE_SEVICE_ID;
+    const templateId = import.meta.env.VITE_TEMPLATE_ID;
+    const publicKey = import.meta.env.VITE_PUBLIC_KET;
+
+    const templateParams = {
+      from_name: formData.from_name,
+      from_email: formData.from_email,
+      message: formData.message
+    };
+
+    try {
+      const response = await emailjs.send(
+        serviceId,
+        templateId,
+        templateParams,
+        publicKey
+      );
+      if(response){
+        openMessageModal();
+      }
+
+    }catch(error){
+      console.log(error)
+    }
   };
   
 
@@ -71,14 +93,14 @@ const ContactUs = () => {
             Got a question? We’d love to hear from you. Send us a message and we’ll respond as soon as possible.
           </p>
 
-          <form onSubmit={handleSubmit}>
+          <div>
             <div className="mb-4">
               <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name*</label>
               <input
                 type="text"
-                id="name"
-                name="name"
-                value={formData.name}
+                id="from_name"
+                name="from_name"
+                value={formData.from_name}
                 onChange={handleChange}
                 className="w-full p-3 border border-gray-300 rounded-md mt-2"
                 required
@@ -88,9 +110,9 @@ const ContactUs = () => {
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email address*</label>
               <input
                 type="email"
-                id="email"
-                name="email"
-                value={formData.email}
+                id="from_email"
+                name="from_email"
+                value={formData.from_email}
                 onChange={handleChange}
                 className="w-full p-3 border border-gray-300 rounded-md mt-2"
                 required
@@ -107,13 +129,12 @@ const ContactUs = () => {
                 className="w-full p-3 border border-gray-300 rounded-md mt-2"
               />
             </div>
-            <button
-              type="submit"
+            <button onClick={handleSubmit}
               className="w-full py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200"
             >
               Send Message
             </button>
-          </form>
+          </div>
         </div>
       </div>
 
