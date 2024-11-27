@@ -41,17 +41,19 @@ const ContactUs = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    if (!isLoggedIn) {
-      openModal();  // Show sign-in modal if not logged in
-    } else {
-      openMessageModal(); // Show message sent modal if logged in
-    }
+  
+    // Directly open the message sent modal when the form is submitted
+    openMessageModal();
   };
+  
 
   const handleSignInSuccess = () => {
+    // Set login status to true after successful sign-in
+    setIsLoggedIn(true);
     closeModal(); // Close sign-in modal
-    openMessageModal(); // Show message sent modal after sign-in
+    
+    // Immediately show the message sent modal after successful sign-in
+    openMessageModal();
   };
 
   const closeMessageModalAndNavigate = () => {

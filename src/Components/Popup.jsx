@@ -16,6 +16,7 @@ function Popup({ isShow, close, type, onSignInSuccess  }) {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       handleRememberMe(); // Handle local storage based on Remember Me
+      onSignInSuccess();
       
       if (onSignInSuccess) {  // Trigger the callback if provided
         onSignInSuccess();

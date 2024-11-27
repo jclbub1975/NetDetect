@@ -4,7 +4,6 @@ import './Styles/index.css';
 import Navbar from "./Components/Navbar.jsx";
 import Home from "./Pages/Home.jsx";
 import About from "./Pages/About.jsx";
-import Signin from "./Pages/Signin.jsx";
 import Dashboard from "./Pages/Dashboard.jsx";
 import Contact from "./Pages/Contact.jsx";
 import { auth } from "./Components/firebase"; // Import Firebase auth instance
@@ -34,13 +33,9 @@ function App() {
             path="/contact" 
             element={<Contact isSignedIn={!!user} onSignIn={() => setShowSignIn(true)} />} 
           />
-          <Route 
-            path="/signin"  
-            element={user ? <Navigate to="/dashboard" /> : <Signin />} // Redirect if logged in
-          />
-          <Route 
+                    <Route 
             path="/dashboard" 
-            element={user ? <Dashboard /> : <Navigate to="/signin" />} // Protect dashboard route
+            element={user ? <Dashboard /> : <Navigate to="/" />} // Protect dashboard route
           />
         </Routes>
       </div>

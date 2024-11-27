@@ -1,14 +1,16 @@
 import React, { useEffect, useRef } from "react";
 
-const Popup1 = ({ close, children }) => {
+const Popup1 = ({ close, children, isShow }) => {
   const modalRef = useRef(null);
 
   // Set focus on the modal when it opens
   useEffect(() => {
-    if (modalRef.current) {
+    if (isShow && modalRef.current) {
       modalRef.current.focus();
     }
-  }, []);
+  }, [isShow]);
+
+  if (!isShow) return null; // Don't render modal if isShow is false
 
   return (
     <div 
