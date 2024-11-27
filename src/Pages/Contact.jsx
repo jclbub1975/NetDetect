@@ -13,9 +13,9 @@ const ContactUs = () => {
   const [isMessageSent, setIsMessageSent] = useState(false); // For Message Sent modal
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Track user login status
   const [formData, setFormData] = useState({
-    from_name: "Test Person one",
-    from_email: "sample@email.com",
-    message: "test message.....",
+    from_name: "",
+    from_email: "",
+    message: "",
   });
 
   // Check if the user is logged in using Firebase Auth
