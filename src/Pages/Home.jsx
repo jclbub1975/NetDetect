@@ -1,30 +1,45 @@
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../Components/firebase"; // Import Firebase auth instance
 import Footer from '../Components/Footer';
 import { Cobe } from '../Components/Cobe';
 import TypingEffect from '../Components/TypingEffect';
 import Popup from "../Components/Popup";
 import Navbar from "../Components/Navbar";
-import { useNavigate } from "react-router-dom";
-import React, { useEffect, useState } from "react";
 
 function Home() {
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
+    const [isLoggedIn, setIsLoggedIn] = useState(false); // Track user login status
 
+    // Open modal for Sign In
     const openModal = () => {
         setIsModalOpen(true);
     };
 
+    // Close modal
     const closeModal = () => {
         setIsModalOpen(false);
     };
 
-    // useEffect(() => {
-    //     fetch(); 
-    // }, []);
+    // Check user login status with Firebase Auth
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            setIsLoggedIn(!!user); // Update login status based on user authentication
+        });
+        return () => unsubscribe(); // Clean up the subscription
+    }, []);
+
+    // Handle sign-in success and navigate to dashboard
+    const handleSignInSuccess = () => {
+        closeModal(); // Close the sign-in modal
+        navigate("/dashboard"); // Navigate to the dashboard after sign-in
+    };
 
     return (
         <>
-              <Navbar onSignInClick={openModal} /> Pass openModal function to Navbar
+            <Navbar onSignInClick={openModal} /> {/* Pass openModal function to Navbar */}
 
             <section id="home" className="home flex flex-row items-center h-screen px-[10%] py-[5%] bg-gradient-to-br from-blue-200 via-white to-blue-100 relative overflow-hidden">
                 <div className="column1 flex flex-col items-start justify-center h-full w-[50%] space-y-6">
@@ -41,18 +56,9 @@ function Home() {
                     >
                         Getting Started
                     </button>
-
-                 {/* Modal for Getting Started */}
-                    {isModalOpen && (
-                        <Popup
-                            isShow={isModalOpen}
-                            close={closeModal} // Pass closeModal to Popup
-                        />
-                    )}
                 </div>
                 <div className="column2 relative h-full w-[50%] flex items-center justify-center">
                     <Cobe />
-
                     <div className="select-none absolute bottom-0 right-0 mb-8 mr-4 text-right text-[1rem] text-gray-600">
                         Secure all networks in all places
                     </div>
@@ -60,6 +66,15 @@ function Home() {
                     </div>
                 </div>
             </section>
+
+            {/* Modal for Getting Started */}
+            {isModalOpen && (
+                <Popup
+                    isShow={isModalOpen}
+                    close={closeModal} // Pass closeModal to Popup
+                    onSignInSuccess={handleSignInSuccess} // Navigate to dashboard on sign-in
+                />
+            )}
 
             <Footer />
         </>

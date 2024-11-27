@@ -19,6 +19,7 @@ function Popup({ isShow, close, type, onSignInSuccess  }) {
       
       if (onSignInSuccess) {  // Trigger the callback if provided
         onSignInSuccess();
+        navigate("/dashboard"); 
       }
       
       close();  // Close the sign-in modal

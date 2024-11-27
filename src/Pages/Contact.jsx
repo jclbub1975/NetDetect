@@ -56,7 +56,7 @@ const ContactUs = () => {
 
   const closeMessageModalAndNavigate = () => {
     closeMessageModal();
-    navigate("/"); // Navigate to the homepage after closing the modal
+    navigate("/dashboard"); // Navigate to the homepage after closing the modal
   };
 
   return (
