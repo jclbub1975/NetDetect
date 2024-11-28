@@ -1,36 +1,41 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react"; 
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../Components/firebase"; // Import Firebase auth instance
+import { auth } from "../Components/firebase";
 import Navbar from "../Components/Navbar";
 import Popup from "../Components/Popup"; // Sign-in modal
-import Popup1 from "../Components/Popup1"; // Message sent modal
+import Popup1 from "../Components/Popup1"; // Message sent and alert modal
 import emailjs from "emailjs-com";
 
 const ContactUs = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false); // For Sign-In modal
   const [isMessageSent, setIsMessageSent] = useState(false); // For Message Sent modal
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track user login status
+  const [isAlertOpen, setIsAlertOpen] = useState(false); // For Validation Alert modal
+  const [alertMessage, setAlertMessage] = useState(''); // Validation message
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [formData, setFormData] = useState({
     from_name: "",
     from_email: "",
     message: "",
   });
 
-  // Check if the user is logged in using Firebase Auth
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setIsLoggedIn(!!user); // Set true if user exists, otherwise false
+      setIsLoggedIn(!!user);
     });
-    return () => unsubscribe(); // Clean up subscription
+    return () => unsubscribe();
   }, []);
 
-  // Open and close modals
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
   const openMessageModal = () => setIsMessageSent(true);
   const closeMessageModal = () => setIsMessageSent(false);
+  const openAlertModal = (message) => {
+    setAlertMessage(message);  // Set custom alert message
+    setIsAlertOpen(true);       // Open validation alert modal
+  };
+  const closeAlertModal = () => setIsAlertOpen(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -41,21 +46,20 @@ const ContactUs = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();  // Prevents form from reloading the page
+    e.preventDefault();
 
-    // Validate required fields
     const { from_name, from_email, message } = formData;
     if (!from_name.trim() || !from_email.trim() || !message.trim()) {
-      alert("Please fill in all fields before submitting.");
+      openAlertModal("Please fill in all fields before submitting.");
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(from_email)) {
-    alert("Please enter a valid email address.");
-    return;
-  }
-  
+    if (!emailRegex.test(from_email)) {
+      openAlertModal("Please enter a valid email address.");
+      return;
+    }
+
     const serviceId = import.meta.env.VITE_SEVICE_ID;
     const templateId = import.meta.env.VITE_TEMPLATE_ID;
     const publicKey = import.meta.env.VITE_PUBLIC_KET;
@@ -69,24 +73,12 @@ const ContactUs = () => {
     try {
       const response = await emailjs.send(serviceId, templateId, templateParams, publicKey);
       if (response.status === 200) {
-        openMessageModal();  // Show success modal on successful email send
+        openMessageModal();  // Show success modal
       }
     } catch (error) {
       console.error("Failed to send message:", error);
-      alert("Failed to send the message. Please try again later.");
+      openAlertModal("Failed to send the message. Please try again later.");
     }
-  };
-
-  // Handle sign-in success
-  const handleSignInSuccess = () => {
-    setIsLoggedIn(true);  // Set login status to true after successful sign-in
-    closeModal(); // Close sign-in modal
-    openMessageModal(); // Immediately show the message sent modal after successful sign-in
-  };
-
-  const closeMessageModalAndNavigate = () => {
-    closeMessageModal();
-    navigate("/dashboard"); // Navigate to the dashboard after closing the modal
   };
 
   return (
@@ -135,8 +127,8 @@ const ContactUs = () => {
                 className="w-full p-3 border border-gray-300 rounded-md mt-2"
               />
             </div>
-            <button onClick={handleSubmit}
-              type="submit"
+            <button
+              onClick={handleSubmit}
               className="w-full py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200"
             >
               Send Message
@@ -145,13 +137,16 @@ const ContactUs = () => {
         </div>
       </div>
 
-      {/* Modal for Sign-In (only show if user isn't logged in) */}
+      {/* Modal for Sign-In */}
       {!isLoggedIn && isModalOpen && (
         <Popup
           isShow={isModalOpen}
           close={closeModal}
           type="signin"
-          onSignInSuccess={handleSignInSuccess}
+          onSignInSuccess={() => {
+            setIsLoggedIn(true);
+            closeModal();
+          }}
         />
       )}
 
@@ -162,8 +157,27 @@ const ContactUs = () => {
             <h3 className="text-2xl font-semibold text-green-600 mb-4">Message Sent!</h3>
             <p className="text-gray-700">Thank you for reaching out. We will get back to you shortly.</p>
             <button
-              onClick={closeMessageModalAndNavigate}
+              onClick={() => {
+                closeMessageModal();
+                navigate("/dashboard");
+              }}
               className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200"
+            >
+              Close
+            </button>
+          </div>
+        </Popup1>
+      )}
+
+      {/* Modal for Validation Alerts */}
+      {isAlertOpen && (
+        <Popup1 isShow={isAlertOpen} close={closeAlertModal}>
+          <div className="p-4 text-center">
+            <h3 className="text-2xl font-semibold text-red-600 mb-4">Alert!</h3>
+            <p className="text-gray-700">{alertMessage}</p>
+            <button
+              onClick={closeAlertModal}
+              className="mt-4 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition duration-200"
             >
               Close
             </button>
